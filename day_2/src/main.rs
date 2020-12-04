@@ -12,14 +12,38 @@ struct password {
 fn main() {
     if let Some(result) = read_input() {
         println!("There are: {} passwords", result.len());
-        let mut valid_pass_count = 0;
+        let mut valid_pass_count_part_1 = 0;
+        let mut valid_pass_count_part_2 = 0;
+
         for pass in result {
             if check_password_validaty(&pass) {
-                valid_pass_count += 1;
+                valid_pass_count_part_1 += 1;
+            }
+            if check_password_validaty_part_2(&pass) {
+                valid_pass_count_part_2 += 1;
             }
         }
-        println!("There are: {} valid passwords", valid_pass_count);
+        println!(
+            "There are: {} part 1 valid passwords",
+            valid_pass_count_part_1
+        );
+        println!(
+            "There are: {} part 2 valid passwords",
+            valid_pass_count_part_2
+        );
     }
+}
+
+fn check_password_validaty_part_2(input: &password) -> bool {
+    let pass: Vec<char> = input.password.chars().collect();
+
+    let first_pos: usize = std::convert::TryInto::try_into(input.min - 1).unwrap();
+    let seocond_pos: usize = std::convert::TryInto::try_into(input.max - 1).unwrap();
+
+    if (pass[first_pos] == input.requirement) ^ (pass[seocond_pos] == input.requirement) {
+        return true;
+    }
+    return false;
 }
 
 fn check_password_validaty(input: &password) -> bool {
