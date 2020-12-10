@@ -35,7 +35,7 @@ fn main() {
         tree_encouterd_right_1_down_2
     );
 
-    let result: i128 = (tree_encouterd_right_3_down_1
+    let result: i32 = (tree_encouterd_right_3_down_1
         * tree_encouterd_right_1_down_1
         * tree_encouterd_right_5_down_1
         * tree_encouterd_right_7_down_1
