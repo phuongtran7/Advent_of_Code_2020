@@ -5,20 +5,57 @@ use std::{
 };
 
 fn main() {
-    let tree_encouterd = get_number_of_tree();
-    println!("Encoutered: {} trees", tree_encouterd);
+    let tree_encouterd_right_3_down_1 = get_trees(3, 1);
+    println!(
+        "Encoutered right 3 down 1: {} trees",
+        tree_encouterd_right_3_down_1
+    );
+
+    let tree_encouterd_right_1_down_1 = get_trees(1, 1);
+    println!(
+        "Encoutered right 1 down 1: {} trees",
+        tree_encouterd_right_1_down_1
+    );
+
+    let tree_encouterd_right_5_down_1 = get_trees(5, 1);
+    println!(
+        "Encoutered right 5 down 1: {} trees",
+        tree_encouterd_right_5_down_1
+    );
+
+    let tree_encouterd_right_7_down_1 = get_trees(7, 1);
+    println!(
+        "Encoutered right 7 down 1: {} trees",
+        tree_encouterd_right_7_down_1
+    );
+
+    let tree_encouterd_right_1_down_2 = get_trees(1, 2);
+    println!(
+        "Encoutered right 1 down 2: {} trees",
+        tree_encouterd_right_1_down_2
+    );
+
+    let result: i128 = (tree_encouterd_right_3_down_1
+        * tree_encouterd_right_1_down_1
+        * tree_encouterd_right_5_down_1
+        * tree_encouterd_right_7_down_1
+        * tree_encouterd_right_1_down_2)
+        .into();
+
+    println!("Part 2: {}", result);
 }
 
-fn get_number_of_tree() -> i32 {
+fn get_trees(right_step: i32, down_step: i32) -> i32 {
     let lines = lines_from_file("input.txt");
-    let mut location: usize = 3;
+    let mut start_location = right_step;
+    let start_line = down_step;
     let mut num_tree = 0;
-    // We start counting at the second line as the first line should be ignore when stepping three step to the right
-    for num in 1..(lines.len() - 1) {
-        if check_location_tree(&lines[num], map_location(location)) {
+
+    for num in (start_line as usize..(lines.len() - 1)).step_by(down_step as usize) {
+        if check_location_tree(&lines[num], map_location(start_location as usize)) {
             num_tree += 1;
         }
-        location += 3;
+        start_location += right_step;
     }
     num_tree
 }
