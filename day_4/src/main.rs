@@ -21,14 +21,23 @@ fn main() {
     let mut section_string: String = String::new();
     let mut passports: Vec<Passport> = Vec::new();
 
-    for line in lines {
-        if line.is_empty() {
+    for line_num in 0..lines.len() {
+        if line_num == lines.len() - 1 {
+            // We are at the end so just parse the last section string
+            section_string.push_str(" ");
+            section_string.push_str(&lines[line_num]);
             let pass = parse_section(section_string.trim());
             passports.push(pass);
             section_string.clear();
         } else {
-            section_string.push_str(" ");
-            section_string.push_str(&line);
+            if lines[line_num].is_empty() {
+                let pass = parse_section(section_string.trim());
+                passports.push(pass);
+                section_string.clear();
+            } else {
+                section_string.push_str(" ");
+                section_string.push_str(&lines[line_num]);
+            }
         }
     }
 
@@ -45,7 +54,7 @@ fn main() {
             && passport.ecl.is_some()
             && passport.pid.is_some()
         {
-            println!("{:?}", passport);
+            //println!("{:?}", passport);
 
             // We don't need to check for CID field
             count += 1;
