@@ -16,6 +16,18 @@ struct Passport {
     cid: Option<String>,
 }
 
+#[allow(non_camel_case_types)]
+enum FieldType {
+    byr,
+    iyr,
+    eyr,
+    hgt,
+    hcl,
+    ecl,
+    pid,
+    cid,
+}
+
 fn main() {
     let lines = lines_from_file("input.txt");
     let mut section_string: String = String::new();
@@ -70,6 +82,103 @@ fn main() {
     println!("Total valid passport with CID are {}", with_cid);
 }
 
+fn validate_type(input: &str, input_type: FieldType) -> Option<String> {
+    match input_type {
+        FieldType::byr => {
+            if input.len() != 4 {
+                return None;
+            } else {
+                let num: i32 = input.parse().unwrap();
+                if num >= 1920 && num <= 2002 {
+                    return Some(input.to_string());
+                }
+                None
+            }
+        }
+        FieldType::iyr => {
+            if input.len() != 4 {
+                return None;
+            } else {
+                let num: i32 = input.parse().unwrap();
+                if num >= 2010 && num <= 2020 {
+                    return Some(input.to_string());
+                }
+                None
+            }
+        }
+        FieldType::eyr => {
+            if input.len() != 4 {
+                return None;
+            } else {
+                let num: i32 = input.parse().unwrap();
+                if num >= 2020 && num <= 2030 {
+                    return Some(input.to_string());
+                }
+                None
+            }
+        }
+        FieldType::hgt => {
+            if input.contains("cm") {
+                if let Some(index) = input.find("cm") {
+                    let num: i32 = input[..index].parse().unwrap();
+                    if num >= 150 && num <= 193 {
+                        return Some(input.to_string());
+                    }
+                }
+                return None;
+            } else if input.contains("in") {
+                if let Some(index) = input.find("in") {
+                    let num: i32 = input[..index].parse().unwrap();
+                    if num >= 59 && num <= 76 {
+                        return Some(input.to_string());
+                    }
+                }
+                return None;
+            }
+            None
+        }
+        FieldType::hcl => {
+            if input.chars().nth(0).unwrap() == '#' {
+                if input.len() == 7 {
+                    return Some(input.to_string());
+                }
+                return None;
+            }
+            None
+        }
+        FieldType::ecl => {
+            if input == "amb"
+                || input == "blu"
+                || input == "brn"
+                || input == "gry"
+                || input == "grn"
+                || input == "hzl"
+                || input == "oth"
+            {
+                return Some(input.to_string());
+            }
+            None
+        }
+        FieldType::pid => {
+            if input.len() == 9 {
+                match input.parse::<i32>() {
+                    Ok(_) => {
+                        return Some(input.to_string());
+                    }
+                    Err(_) => {
+                        return None;
+                    }
+                }
+            }
+            None
+        }
+        FieldType::cid => {
+            // Ignore this field
+            return Some(input.to_string());
+        }
+    }
+}
+
 fn parse_section(input: &str) -> Passport {
     let mut return_val: Passport = { Default::default() };
 
@@ -81,28 +190,28 @@ fn parse_section(input: &str) -> Passport {
 
         match temp[0] {
             "byr" => {
-                return_val.byr = Some(temp[1].to_string());
+                return_val.byr = validate_type(temp[1], FieldType::byr);
             }
             "iyr" => {
-                return_val.iyr = Some(temp[1].to_string());
+                return_val.iyr = validate_type(temp[1], FieldType::iyr);
             }
             "eyr" => {
-                return_val.eyr = Some(temp[1].to_string());
+                return_val.eyr = validate_type(temp[1], FieldType::eyr);
             }
             "hgt" => {
-                return_val.hgt = Some(temp[1].to_string());
+                return_val.hgt = validate_type(temp[1], FieldType::hgt);
             }
             "hcl" => {
-                return_val.hcl = Some(temp[1].to_string());
+                return_val.hcl = validate_type(temp[1], FieldType::hcl);
             }
             "ecl" => {
-                return_val.ecl = Some(temp[1].to_string());
+                return_val.ecl = validate_type(temp[1], FieldType::ecl);
             }
             "pid" => {
-                return_val.pid = Some(temp[1].to_string());
+                return_val.pid = validate_type(temp[1], FieldType::pid);
             }
             "cid" => {
-                return_val.cid = Some(temp[1].to_string());
+                return_val.cid = validate_type(temp[1], FieldType::cid);
             }
             _ => {}
         }
